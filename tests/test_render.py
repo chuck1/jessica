@@ -20,16 +20,19 @@ async def test_render():
             f.write('')
 
         with open(os.path.join(d1, 'index.md'), 'w') as f:
-            f.write('# hello\n\n[test](a/b/c)')
+            f.write('{% set template = "temp1.html" %}\n# hello\n\n[test](a/b/c)')
 
         with open(os.path.join(d1, 'templates', 'default.html'), 'w') as f:
             f.write('{% block body %}{% endblock %}')
+
+        with open(os.path.join(d1, 'templates', 'temp1.html'), 'w') as f:
+            f.write('<html><head></head><body>{% block body %}{% endblock %}</body></html>')
 
         sys.path.append(d)
         
         e = jessica.Engine(d1, 'source_package')
         
-        await e.get_file('index.html')
+        print(await e.get_file('index.html'))
 
 
 

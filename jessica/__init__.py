@@ -16,18 +16,38 @@ class Engine:
                 autoescape=jinja2.select_autoescape(['html', 'xml']),
                 )
     
-    async def get_file(self, path):
+    async def get_file(self, path, **kwargs):
         h, ext = os.path.splitext(path)
         f = self.mapping[ext]
-        return await f(h, ext)
+        return await f(h, ext, **kwargs)
 
-    def render_text_2(self, text):
+    def render_text_2(self, text, context={}):
 
         template = self.env.from_string(text)
 
-        return template.render()
+        return template, template.render(context)
 
-    async def get_md_to_html(self, h, ext):
+    def render_html_2(self, html, template_1):
+
+        if 'template' in dir(template_1.module):
+            template_file = template_1.module.template
+        else:
+            template_file = 'default.html'
+
+        block_name = 'body'
+
+        
+
+        template_text = f'{{% extends {template_file!r} %}} {{% block {block_name} %}}{html}{{% endblock %}}'
+        print(f'template_text={template_text!r}')
+        
+        template = self.env.from_string(template_text)
+
+        html_2 = template.render()
+
+        return html_2
+
+    async def get_md_to_html(self, h, ext, context_1={}):
         # source is rendered twice.
         # first to get the body as html and get variables set by the template, and second to but the body into the page.
         #
@@ -39,19 +59,11 @@ class Engine:
             text = f.read()
         
 
-        text_2 = self.render_text_2(text)
+        template_1, text_2 = self.render_text_2(text, context_1)
 
         html = markdown.markdown(text_2)
 
-        template_file = 'default.html'
-        block_name = 'body'
-
-        template_text = f'{{% extends {template_file!r} %}} {{% block {block_name} %}}{html}{{% endblock %}}'
-        print(f'template_text={template_text!r}')
-        
-        template = self.env.from_string(template_text)
-
-        html_2 = template.render()
+        html_2 = self.render_html_2(html, template_1)
 
         return html_2
        
