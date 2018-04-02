@@ -10,8 +10,8 @@ class Engine:
         self.mapping = {
                 '.html': self.get_md_to_html,
                 }
-
-        loader = jinja2.FileSystemLoader(os.path.join(source_dir, 'templates')),
+        
+        loader = jinja2.FileSystemLoader(os.path.join(source_dir, 'templates'))
 
         self.env = jinja2.Environment(
                 loader=loader,

@@ -11,13 +11,10 @@ async def test_render():
 
     with tempfile.TemporaryDirectory() as d:
 
-        d1 = os.path.join(d, 'source_package')
+        d1 = os.path.join(d, 'source')
 
         os.makedirs(d1)
         os.makedirs(os.path.join(d1, 'templates'))
-
-        with open(os.path.join(d1, '__init__.py'), 'w') as f:
-            f.write('')
 
         with open(os.path.join(d1, 'index.md'), 'w') as f:
             f.write('{% set template = "temp1.html" %}\n# hello\n\n[test](a/b/c)')
@@ -28,10 +25,12 @@ async def test_render():
         with open(os.path.join(d1, 'templates', 'temp1.html'), 'w') as f:
             f.write('<html><head></head><body>{% block body %}{% endblock %}</body></html>')
 
-        sys.path.append(d)
+        e = jessica.Engine(d1)
         
-        e = jessica.Engine(d1, 'source_package')
-        
+        e.env.get_template('default.html')
+
+        e.env.get_template('temp1.html')
+
         print(await e.get_file('index.html'))
 
 
