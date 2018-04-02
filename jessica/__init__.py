@@ -4,15 +4,17 @@ import jinja2
 import markdown
 
 class Engine:
-    def __init__(self, source_dir, source_package):
+    def __init__(self, source_dir):
         self.source_dir = source_dir
 
         self.mapping = {
                 '.html': self.get_md_to_html,
                 }
 
+        loader = jinja2.FileSystemLoader(os.path.join(source_dir, 'templates')),
+
         self.env = jinja2.Environment(
-                loader=jinja2.PackageLoader(source_package, 'templates'),
+                loader=loader
                 autoescape=jinja2.select_autoescape(['html', 'xml']),
                 )
     
@@ -35,8 +37,6 @@ class Engine:
             template_file = 'default.html'
 
         block_name = 'body'
-
-        
 
         template_text = f'{{% extends {template_file!r} %}} {{% block {block_name} %}}{html}{{% endblock %}}'
         print(f'template_text={template_text!r}')
