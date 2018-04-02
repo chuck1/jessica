@@ -1,5 +1,4 @@
 attrs==17.4.0
--e git+git@github.com:chuck1/jessica@9ab60290a91c2a76a228b937fe6f407abaefb8b3#egg=jessica
 Jinja2==2.10
 Markdown==2.6.11
 MarkupSafe==1.0
