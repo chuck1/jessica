@@ -14,7 +14,7 @@ class Engine:
         loader = jinja2.FileSystemLoader(os.path.join(source_dir, 'templates')),
 
         self.env = jinja2.Environment(
-                loader=loader
+                loader=loader,
                 autoescape=jinja2.select_autoescape(['html', 'xml']),
                 )
     
