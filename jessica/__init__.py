@@ -17,10 +17,27 @@ class SourceFile:
                 autoescape=jinja2.select_autoescape(['html', 'xml']),
                 )
 
-    def get_raw(self, path):
-        path1 = os.path.join(self.directory, path)
-        with open(path1) as f:
+        self.ext_mapping = {
+                '.html': '.md',
+                }
+
+    def get_raw(self, path0):
+        h, ext = os.path.splitext(path0)
+        ext2 = self.ext_mapping[ext]
+        path1 = h + ext2
+        path2 = os.path.join(self.directory, path1)
+        with open(path2) as f:
             return f.read()
+
+    async def write_file(self, path, text):
+        h, ext = os.path.splitext(path)
+        ext2 = self.ext_mapping[ext]
+        path2 = h + ext2
+
+        path3 = os.path.join(self.directory, path2)
+        
+        with open(path3, 'w') as f:
+            f.write(text)
 
 class Engine:
     def __init__(self, source_dir):
@@ -30,18 +47,10 @@ class Engine:
                 '.html': self.get_md_to_html,
                 }
 
-        self.ext_mapping = {
-                '.html': '.md',
-                }
-
         self.source = SourceFile(source_dir)
     
     async def get_raw(self, path):
-        h, ext = os.path.splitext(path)
-        ext2 = self.ext_mapping[ext]
-        path2 = h + ext2
-
-        return self.source.get_raw(path2)
+        return self.source.get_raw(path)
 
     async def get_file(self, path, **kwargs):
         h, ext = os.path.splitext(path)
@@ -49,14 +58,7 @@ class Engine:
         return await f(h, ext, **kwargs)
 
     async def write_file(self, path, text):
-        h, ext = os.path.splitext(path)
-        ext2 = self.ext_mapping[ext]
-        path2 = h + ext2
-
-        path3 = os.path.join(self.source_dir, path2)
-        
-        with open(path3, 'w') as f:
-            f.write(text)
+        await self.source.write_file(path, text)
 
     def render_text_2(self, text, context={}):
 
@@ -81,6 +83,12 @@ class Engine:
 
         return html_2
 
+    def render_html(self, template_1, text_2):
+        
+        html = markdown.markdown(text_2)
+
+        return html
+
     async def get_md_to_html(self, h, ext, context_1={}, context_2={}):
         # source is rendered twice.
         # first to get the body as html and get variables set by the template, and second to but the body into the page.
@@ -92,12 +100,11 @@ class Engine:
         with open(file_source) as f:
             text = f.read()
         
-
         template_1, text_2 = self.render_text_2(text, context_1)
 
-        html = markdown.markdown(text_2)
+        html_1 = self.render_html(template_1, text_2)
 
-        html_2 = self.render_html_2(html, template_1, context_2)
+        html_2 = self.render_html_2(html_1, template_1, context_2)
 
         return html_2
        
