@@ -3,6 +3,16 @@ import os
 import jinja2
 import markdown
 
+class Source:
+    pass
+
+class SourceFile:
+    def __init__(self, directory):
+        self.directory = directory
+
+        #self.template_loader = 
+
+
 class Engine:
     def __init__(self, source_dir):
         self.source_dir = source_dir
@@ -10,7 +20,11 @@ class Engine:
         self.mapping = {
                 '.html': self.get_md_to_html,
                 }
-        
+
+        self.ext_mapping = {
+                '.html': '.md',
+                }
+
         loader = jinja2.FileSystemLoader(os.path.join(source_dir, 'templates'))
 
         self.env = jinja2.Environment(
@@ -18,10 +32,30 @@ class Engine:
                 autoescape=jinja2.select_autoescape(['html', 'xml']),
                 )
     
+    async def get_raw(self, path):
+        h, ext = os.path.splitext(path)
+        ext2 = self.ext_mapping[ext]
+        path2 = h + ext2
+
+        path3 = os.path.join(self.source_dir, path2)
+
+        with open(path3) as f:
+            return f.read()
+
     async def get_file(self, path, **kwargs):
         h, ext = os.path.splitext(path)
         f = self.mapping[ext]
         return await f(h, ext, **kwargs)
+
+    async def write_file(self, path, text):
+        h, ext = os.path.splitext(path)
+        ext2 = self.ext_mapping[ext]
+        path2 = h + ext2
+
+        path3 = os.path.join(self.source_dir, path2)
+        
+        with open(path3, 'w') as f:
+            f.write(text)
 
     def render_text_2(self, text, context={}):
 
@@ -39,7 +73,6 @@ class Engine:
         block_name = 'body'
 
         template_text = f'{{% extends {template_file!r} %}} {{% block {block_name} %}}{html}{{% endblock %}}'
-        print(f'template_text={template_text!r}')
         
         template = self.env.from_string(template_text)
 
