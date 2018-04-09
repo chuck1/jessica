@@ -10,8 +10,17 @@ class SourceFile:
     def __init__(self, directory):
         self.directory = directory
 
-        #self.template_loader = 
+        self.template_loader = jinja2.FileSystemLoader(os.path.join(self.directory, 'templates'))
 
+        self.template_env = jinja2.Environment(
+                loader=self.template_loader,
+                autoescape=jinja2.select_autoescape(['html', 'xml']),
+                )
+
+    def get_raw(self, path):
+        path1 = os.path.join(self.directory, path)
+        with open(path1) as f:
+            return f.read()
 
 class Engine:
     def __init__(self, source_dir):
@@ -25,22 +34,14 @@ class Engine:
                 '.html': '.md',
                 }
 
-        loader = jinja2.FileSystemLoader(os.path.join(source_dir, 'templates'))
-
-        self.env = jinja2.Environment(
-                loader=loader,
-                autoescape=jinja2.select_autoescape(['html', 'xml']),
-                )
+        self.source = SourceFile(source_dir)
     
     async def get_raw(self, path):
         h, ext = os.path.splitext(path)
         ext2 = self.ext_mapping[ext]
         path2 = h + ext2
 
-        path3 = os.path.join(self.source_dir, path2)
-
-        with open(path3) as f:
-            return f.read()
+        return self.source.get_raw(path2)
 
     async def get_file(self, path, **kwargs):
         h, ext = os.path.splitext(path)
@@ -59,7 +60,7 @@ class Engine:
 
     def render_text_2(self, text, context={}):
 
-        template = self.env.from_string(text)
+        template = self.source.template_env.from_string(text)
 
         return template, template.render(context)
 
@@ -74,7 +75,7 @@ class Engine:
 
         template_text = f'{{% extends {template_file!r} %}} {{% block {block_name} %}}{html}{{% endblock %}}'
         
-        template = self.env.from_string(template_text)
+        template = self.source.template_env.from_string(template_text)
 
         html_2 = template.render(context_2)
 
