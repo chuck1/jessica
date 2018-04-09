@@ -55,7 +55,7 @@ class Engine:
     async def get_file(self, path, **kwargs):
         h, ext = os.path.splitext(path)
         f = self.mapping[ext]
-        return await f(h, ext, **kwargs)
+        return await f(path, h, ext, **kwargs)
 
     async def write_file(self, path, text):
         await self.source.write_file(path, text)
@@ -89,18 +89,15 @@ class Engine:
 
         return html
 
-    async def get_md_to_html(self, h, ext, context_1={}, context_2={}):
+    async def get_md_to_html(self, path, h, ext, context_1={}, context_2={}):
         # source is rendered twice.
         # first to get the body as html and get variables set by the template, and second to but the body into the page.
         #
-        # text -> text_2 -> html -> html_2
+        # text_1 -> text_2 -> html_1 -> html_2
+        
+        text_1 = self.source.get_raw(path)
 
-        file_source = os.path.join(self.source_dir, h + '.md')
-        
-        with open(file_source) as f:
-            text = f.read()
-        
-        template_1, text_2 = self.render_text_2(text, context_1)
+        template_1, text_2 = self.render_text_2(text_1, context_1)
 
         html_1 = self.render_html(template_1, text_2)
 
