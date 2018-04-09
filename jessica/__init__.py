@@ -29,7 +29,7 @@ class Engine:
 
         return template, template.render(context)
 
-    def render_html_2(self, html, template_1):
+    def render_html_2(self, html, template_1, context_2={}):
 
         if 'template' in dir(template_1.module):
             template_file = template_1.module.template
@@ -43,11 +43,11 @@ class Engine:
         
         template = self.env.from_string(template_text)
 
-        html_2 = template.render()
+        html_2 = template.render(context_2)
 
         return html_2
 
-    async def get_md_to_html(self, h, ext, context_1={}):
+    async def get_md_to_html(self, h, ext, context_1={}, context_2={}):
         # source is rendered twice.
         # first to get the body as html and get variables set by the template, and second to but the body into the page.
         #
@@ -63,7 +63,7 @@ class Engine:
 
         html = markdown.markdown(text_2)
 
-        html_2 = self.render_html_2(html, template_1)
+        html_2 = self.render_html_2(html, template_1, context_2)
 
         return html_2
        

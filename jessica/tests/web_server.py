@@ -13,7 +13,9 @@ async def index(request):
 
     e = jessica.Engine(sys.argv[1])
 
-    html = await e.get_file(page, context_1={})
+    html = await e.get_file(page, context_2={
+        'path': page
+        })
 
     return aiohttp.web.Response(text=html, content_type='text/html')
 
