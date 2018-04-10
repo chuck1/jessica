@@ -2,7 +2,7 @@ import sys
 import aiohttp.web
 import jessica
 
-e = jessica.Engine(sys.argv[1])
+e = jessica.Engine(jessica.SourceFile(sys.argv[1]))
 
 async def icon(request):
     return aiohttp.web.HTTPFound('https://s3-us-west-2.amazonaws.com/19f075ca4a482833.media/j.ico')

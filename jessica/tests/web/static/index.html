@@ -1,0 +1,20 @@
+<html>
+	<head>
+		<script src="/static/default.js"></script>
+		<script
+			src="https://code.jquery.com/jquery-3.3.1.min.js"
+			integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			crossorigin="anonymous"></script>
+	</head>
+	<body>
+		<div><button id="edit_open">edit</button></div>
+		<div id="rendered">
+		{% autoescape off %}{{body}}{% endautoescape %}
+		</div>
+	</body>
+	<script>
+		var path = {% autoescape off %}{{path}}{% endautoescape %};
+		var raw = {% autoescape off %}{{raw}}{% endautoescape %};
+		$(document).ready(on_load);
+	</script>
+</html>

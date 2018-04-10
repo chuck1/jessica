@@ -22,7 +22,8 @@ function edit_open(e) {
 	var button_cancel = $("<button>cancel</button>")
 
 	button_cancel.click(function() {
-		window.location.replace("/" + path);
+		//window.location.replace(url);
+		location.reload();
 	});
 
 	button_edit.click(function() {
@@ -40,7 +41,8 @@ function edit_open(e) {
 			var data = JSON.parse(this.responseText);
 			console.log(data);
 
-			window.location.replace("/" + path);
+			//window.location.replace(url);
+			location.reload();
 		}
 
 	});
