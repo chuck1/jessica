@@ -6,6 +6,17 @@ import markdown
 class Source:
     pass
 
+class SourceMongo:
+    def __init__(self, db_name):
+        client = pymongo.MongoClient(os.environ['MONGO_URI'])
+        self.db = client[db_name]
+
+    async def get_raw(self, filt):
+        return
+
+    async def write_file(self, filt, text):
+        return 
+
 class SourceFile:
     def __init__(self, directory):
         self.directory = directory
@@ -21,7 +32,7 @@ class SourceFile:
                 '.html': '.md',
                 }
 
-    def get_raw(self, path0):
+    async def get_raw(self, path0):
         h, ext = os.path.splitext(path0)
         ext2 = self.ext_mapping[ext]
         path1 = h + ext2
@@ -50,7 +61,7 @@ class Engine:
         self.source = SourceFile(source_dir)
     
     async def get_raw(self, path):
-        return self.source.get_raw(path)
+        return await self.source.get_raw(path)
 
     async def get_file(self, path, **kwargs):
         h, ext = os.path.splitext(path)
@@ -95,7 +106,7 @@ class Engine:
         #
         # text_1 -> text_2 -> html_1 -> html_2
         
-        text_1 = self.source.get_raw(path)
+        text_1 = await self.source.get_raw(path)
 
         template_1, text_2 = self.render_text_2(text_1, context_1)
 
