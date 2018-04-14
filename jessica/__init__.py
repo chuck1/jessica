@@ -58,8 +58,8 @@ class MongoLoader(jinja2.BaseLoader):
         return (raw, None, lambda: False)
 
 class SourceMongo:
-    def __init__(self, db_name):
-        client = pymongo.MongoClient(os.environ['MONGO_URI'])
+    def __init__(self, db_name, mongo_url):
+        client = pymongo.MongoClient(mongo_url)
         self.db = client[db_name]
         
         self.ref_name = 'master'
@@ -342,8 +342,8 @@ class Engine:
        
 class EngineDB(Engine):
     
-    def __init__(self, db_name):
-        super(EngineDB, self).__init__(SourceMongo(db_name))
+    def __init__(self, db_name, mongo_url=None):
+        super(EngineDB, self).__init__(SourceMongo(db_name, mongo_url))
 
     async def get_file(self, filt, context_1={}, context_2={}):
 
