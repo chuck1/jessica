@@ -1,5 +1,6 @@
 import os
 
+import elephant.database_global
 import aardvark
 import jinja2
 import markdown
@@ -58,11 +59,8 @@ class MongoLoader(jinja2.BaseLoader):
         return (raw, None, lambda: False)
 
 class SourceMongo:
-    def __init__(self, db_name, mongo_url):
-        client = pymongo.MongoClient(mongo_url)
-        self.db = client[db_name]
-        
-        self.ref_name = 'master'
+    def __init__(self, db, ref_name):
+        self.engine = elephant.database_global.DatabaseGlobal(db, ref_name)
 
         self.template_loader = MongoLoader(self)
 
@@ -120,28 +118,26 @@ class SourceMongo:
         for file0 in self.db.texts.find():
             self.working_tree_file(file0['_id'])
 
-    @property
-    def ref(self):
-        return self.db.refs.find_one({'name': self.ref_name})
-
     def _get_raw(self, filt):
         
         file0 = self._get_text_item(filt)
 
         if file0 is None: return
         
-        return file0['content']['text']
+        return file0['text']
 
     async def get_raw(self, filt):
         return self._get_raw(filt)
 
     def _get_text_item(self, filt0):
         
-        self.update_tree()
+        #self.update_tree()
 
-        filt1 = dict((f'content.{k}', v) for k, v in filt0.items())
+        #filt1 = dict((f'content.{k}', v) for k, v in filt0.items())
 
-        item = self.db.texts.find_one(filt1)
+        #item = self.db.texts.find_one(filt)
+
+        item = self.engine.get_content(filt0)
 
         return item
 
@@ -149,87 +145,11 @@ class SourceMongo:
         return self._get_text_item(filt0)
 
     async def insert_text_item(self, item):
-        return self.db.texts.insert_one(item)
+        return self.engine.put(None, item)
 
-    def commit(self, files):
-        if self.ref is None:
-            parent_commit = None
-        else:
-            parent_commit = self.ref['commit_id']
-
-        item = {
-                'parent': parent_commit,
-                'files': files,
-                }
-
-        res = self.db.commits.insert_one(item)
-
-        if self.ref is None:
-            self.db.refs.insert_one({'name': self.ref_name, 'commit_id': res.inserted_id})
-        else:
-            self.db.refs.update_one({'name': self.ref_name}, {'$set': {'commit_id': res.inserted_id}})
-
-        return res.inserted_id
-
-    async def write_file(self, filt, text):
-
-        f0 = await self.get_raw(filt)
-
-        file0 = await self.get_text_item(filt)
-
-        if file0 is None:
-            filt1 = dict(filt)
-            filt1['text'] = text
-
-            res = await self.insert_text_item({'content': filt1})
-            text_id = res.inserted_id
-        else:
-            text_id = file0['_id']
-
-        
-        if file0 is None:
-            content0 = {}
-            content1 = dict(filt)
-        else:
-            content0 = file0['content']
-            content1 = dict(content0)
-
-        content1['text'] = text
-
-        diffs0 = list(aardvark.diff(content0, content1))
-
-        diffs1 = [d.to_array() for d in diffs0]
-        
-        if True:
-            # for safety
-            print('testing')
-            diffs2 = [aardvark.from_array(d) for d in diffs1]
-            print('diffs')
-            for d in diffs0:
-                print(f'  {d!r}')
-            print('diffs')
-            for d in diffs2:
-                print(f'  {d!r}')
-            
-            content2 = aardvark.apply(content0, diffs2)
-
-            if content1 != content2:
-                breakpoint()
-
-            assert(content1 == content2)
-
-        changes = [
-                    {
-                        'file_id': text_id,
-                        'changes': diffs1,
-                        },
-                    ]
-
-        commit_id = self.commit(changes)
-
-        if file0 is None:
-            self.db.texts.update_one({'_id': text_id}, {'$set': {'commit_id': commit_id}})
-
+    def put_new(self, item):
+        return self.engine.put(None, item)
+      
     def render_text_3(self, filt, template_1, text_2):
         
         return self.render_text_3_md_to_html(filt, template_1, text_2)
@@ -342,8 +262,8 @@ class Engine:
        
 class EngineDB(Engine):
     
-    def __init__(self, db_name, mongo_url=None):
-        super(EngineDB, self).__init__(SourceMongo(db_name, mongo_url))
+    def __init__(self, db, ref_name):
+        super(EngineDB, self).__init__(SourceMongo(db, ref_name))
 
     async def get_file(self, filt, context_1={}, context_2={}):
 
@@ -352,4 +272,9 @@ class EngineDB(Engine):
         
         return await super(EngineDB, self).get_file(filt, context_1, context_2)
 
+    def put_new(self, item):
+        return self.source.put_new(item)
+
+    def find(self, filt):
+        return self.source.engine.find(filt)
 

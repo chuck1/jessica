@@ -1,10 +1,22 @@
+-e git+git@github.com:chuck1/aardvark@8883fac44ef7031eb22b2ee4d87a2627105f4a54#egg=aardvark
+aiohttp==3.1.2
+async-timeout==2.0.1
 attrs==17.4.0
+bson==0.5.2
+chardet==3.0.4
+idna==2.6
+idna-ssl==1.0.1
+-e git+git@github.com:chuck1/jessica@89f3120bfb4cc81e6f24e83a91fb9a8f25b99b10#egg=jessica
 Jinja2==2.10
 Markdown==2.6.11
 MarkupSafe==1.0
 more-itertools==4.1.0
+multidict==4.1.0
 pluggy==0.6.0
 py==1.5.3
+pymongo==3.6.1
 pytest==3.5.0
 pytest-asyncio==0.8.0
+pytz==2018.4
 six==1.11.0
+yarl==1.1.1

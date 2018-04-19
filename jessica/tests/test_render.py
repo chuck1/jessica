@@ -46,11 +46,11 @@ async def test_render_mongo():
 
         print('write file')
 
-        await e.write_file({'title': 'i like kittens'}, text)
+        await e.put_new({'title': 'i like kittens'}, text)
 
-        await e.write_file({'template': 'default.html'}, temp_1_text)
+        await e.put_new({'template': 'default.html'}, temp_1_text)
 
-        await e.write_file({'template': 'temp1.html'}, temp_2_text)
+        await e.put_new({'template': 'temp1.html'}, temp_2_text)
 
         e.source.template_env.get_template('default.html')
 

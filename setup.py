@@ -11,7 +11,9 @@ kwargs = {
         'author': '',
         'author_email': '',
         'license': 'MIT',
-        'packages': ['jessica'],
+        'packages': [
+            'jessica',
+            ],
         'zip_safe': False,
         }
 
