@@ -4,10 +4,13 @@ import aiohttp.web
 import jessica
 import json
 import jinja2
+import pymongo
 
 def breakpoint(): import pdb;pdb.set_trace()
 
-e = jessica.EngineDB(sys.argv[1], os.environ['MONGO_URI'])
+client = pymongo.MongoClient(os.environ['MONGO_URI'])
+db = client.texts_personal
+e = jessica.EngineDB(db, "master")
 
 async def icon(request):
     return aiohttp.web.HTTPFound('https://s3-us-west-2.amazonaws.com/19f075ca4a482833.media/j.ico')

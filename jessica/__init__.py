@@ -149,6 +149,9 @@ class SourceMongo:
 
     def put_new(self, item):
         return self.engine.put(None, item)
+
+    def put(self, item_id, item):
+        return self.engine.put(item_id, item)
       
     def render_text_3(self, filt, template_1, text_2):
         
@@ -271,6 +274,9 @@ class EngineDB(Engine):
             return await self.source.get_raw(filt)
         
         return await super(EngineDB, self).get_file(filt, context_1, context_2)
+
+    def put(self, item_id, item):
+        return self.source.put(item_id, item)
 
     def put_new(self, item):
         return self.source.put_new(item)
