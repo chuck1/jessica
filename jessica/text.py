@@ -1,3 +1,4 @@
+import json
 import datetime
 import bson
 import jessica.aarray
@@ -6,19 +7,26 @@ class Text(jessica.aarray._AArray):
     def __init__(self, engine, d):
         super(Text, self).__init__(engine, d['_id'], d)
 
-    def to_array(self):
-        def _f(k, v):
-            if isinstance(v, datetime.datetime):
-                v = str(v)
+    async def to_array(self):
+        
+        d0 = dict(self.d)
 
-            if isinstance(v, bson.objectid.ObjectId):
-                v = str(v)
-
-            return k, v
-
-        d0 = dict(_f(k, v) for k, v in self.d.items())
+        # render
+        s = await self.engine.get_file({'_id': self.d['_id']})
+            
+        assert ('_temp' not in d0)
+        
+        d0['_temp'] = {'html': s}
 
         del d0['_elephant']
+
+        # test json encode
+        if False:
+            try:
+                bson.json_util.dumps(d0)
+            except:
+                print(d0)
+                raise
 
         return d0
 

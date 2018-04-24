@@ -52,9 +52,10 @@ class MongoLoader(jinja2.BaseLoader):
         raw = self.source._get_raw(filt)
 
         if raw is None:
-            raise jinja2.TemplateNotFound(template)
-            #if template == 'default.html':
-            #    self.source.
+            if template == 'default.html':
+                raw = '{% block body %}{% endblock %}'
+            else:
+                raise jinja2.TemplateNotFound(template)
 
         return (raw, None, lambda: False)
 
@@ -124,6 +125,9 @@ class SourceMongo:
 
         if file0 is None: return
         
+        if not isinstance(file0['text'], str):
+            raise TypeError(f'text field must be string. {file0!r}')
+
         return file0['text']
 
     async def get_raw(self, filt):
@@ -225,7 +229,6 @@ class Engine:
         await self.source.write_file(path, text)
 
     def render_text_2(self, text, context={}):
-
         template = self.source.template_env.from_string(text)
 
         return template, template.render(context)
