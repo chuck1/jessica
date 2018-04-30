@@ -4,8 +4,8 @@ import bson
 import jessica.aarray
 
 class Text(jessica.aarray._AArray):
-    def __init__(self, engine, d):
-        super(Text, self).__init__(engine, d['_id'], d)
+    def __init__(self, e, d):
+        super(Text, self).__init__(e, d)
 
     async def to_array(self):
         
@@ -13,10 +13,8 @@ class Text(jessica.aarray._AArray):
 
         # render
         s = await self.engine.get_file({'_id': self.d['_id']})
-            
-        assert ('_temp' not in d0)
         
-        d0['_temp'] = {'html': s}
+        d0['_temp']['html'] = s
 
         del d0['_elephant']
 
