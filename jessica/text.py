@@ -14,9 +14,10 @@ class Text(jessica.aarray._AArray):
         # render
         s = await self.engine.get_file({'_id': self.d['_id']})
             
-        assert ('_temp' not in d0)
+        if '_temp' not in d0:
+            d0['_temp'] = {}
         
-        d0['_temp'] = {'html': s}
+        d0['_temp']['html'] = s
 
         del d0['_elephant']
 
