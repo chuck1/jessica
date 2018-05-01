@@ -1,8 +1,7 @@
 
 class _AArray:
-    def __init__(self, engine, _id, d):
+    def __init__(self, engine, d):
         self.engine = engine
-        self._id = _id
         self.d = d
 
     def __getitem__(self, k):
@@ -11,7 +10,7 @@ class _AArray:
     def __setitem__(self, k, v):
         self.d[k] = v
 
-        self.engine.put(self._id, self.d)
+        self.engine.put(self.d["_id"], self.d)
 
     def get(self, k, default):
         if k in self.d:

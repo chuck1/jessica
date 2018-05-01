@@ -4,8 +4,8 @@ import os
 import tempfile
 
 import pytest
-
-import jessica
+import jessica.elephant_
+import jessica.filesystem_
 
 @pytest.mark.asyncio
 async def test_render():
@@ -26,18 +26,18 @@ async def test_render():
         with open(os.path.join(d1, 'templates', 'temp1.html'), 'w') as f:
             f.write('<html><head></head><body>{% block body %}{% endblock %}</body></html>')
 
-        e = jessica.Engine(jessica.SourceFile(d1))
+        e = jessica.filesystem_.Engine(d1)
         
-        e.source.template_env.get_template('default.html')
+        e.template_env.get_template('default.html')
 
-        e.source.template_env.get_template('temp1.html')
+        e.template_env.get_template('temp1.html')
 
         print(await e.get_file('index.html'))
 
 @pytest.mark.asyncio
-async def test_render_mongo():
+async def test_render_mongo(database):
 
-        e = jessica.EngineDB(f'test_{int(time.time())}')
+        e = jessica.elephant_.Engine(database, "master")
 
         text = '{% set template = "temp1.html" %}\n# hello\n\n[test](a/b/c)'
 
@@ -46,15 +46,15 @@ async def test_render_mongo():
 
         print('write file')
 
-        await e.put_new({'title': 'i like kittens'}, text)
+        e.put_new({'title': 'i like kittens', "text": text})
 
-        await e.put_new({'template': 'default.html'}, temp_1_text)
+        e.put_new({'template': 'default.html', "text": temp_1_text})
 
-        await e.put_new({'template': 'temp1.html'}, temp_2_text)
+        e.put_new({'template': 'temp1.html', "text": temp_2_text})
 
-        e.source.template_env.get_template('default.html')
+        e.template_env.get_template('default.html')
 
-        e.source.template_env.get_template('temp1.html')
+        e.template_env.get_template('temp1.html')
 
         print(await e.get_file({'title': 'i like kittens'}))
 
