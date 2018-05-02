@@ -12,11 +12,11 @@ def breakpoint():
 
 class Engine:
     def __init__(self):
-        pass
+        self.globals_1 = {}
     
     def render_text_2(self, text, context={}):
         template = self.template_env.from_string(text)
-
+        template.globals.update(self.globals_1)
         return template, template.render(context)
 
     def render_text_4(self, text, template_1, context_2={}):

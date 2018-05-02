@@ -22,7 +22,6 @@ class Loader(jinja2.BaseLoader):
         return (raw, None, lambda: False)
 
 class Engine(elephant.global_.Global, jessica.Engine):
-    
     def __init__(self, db, ref_name):
         jessica.Engine.__init__(self)
         elephant.global_.Global.__init__(self, db, ref_name)
