@@ -1,9 +1,9 @@
 import json
 import datetime
 import bson
-import jessica.aarray
+import elephant.global_
 
-class Text(jessica.aarray._AArray):
+class Text(elephant.global_.File):
     def __init__(self, e, d):
         super(Text, self).__init__(e, d)
 
@@ -12,7 +12,7 @@ class Text(jessica.aarray._AArray):
         d0 = dict(self.d)
 
         # render
-        s = await self.engine.get_file({'_id': self.d['_id']})
+        s = await self.e.get_file({'_id': self.d['_id']})
         
         d0['_temp']['html'] = s
 
