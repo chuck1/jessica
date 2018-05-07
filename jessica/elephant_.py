@@ -98,6 +98,9 @@ class Engine(elephant.global_.Global, jessica.Engine):
 
         if file0 is None: return
         
+        if not "text" in file0.d:
+            return ""
+
         if not isinstance(file0.d['text'], str):
             raise TypeError(f'text field must be string. {file0!r}')
 
