@@ -12,9 +12,12 @@ class Text(elephant.global_.File):
         d0 = dict(self.d)
 
         # render
-        s = await self.e.get_file({'_id': self.d['_id']})
+        try:
+            s = await self.e.get_file({'_id': self.d['_id']})
         
-        d0['_temp']['html'] = s
+            d0['_temp']['html'] = s
+        except Exception as e:
+            d0['_temp']['html'] = str(e)
 
         del d0['_elephant']
 
