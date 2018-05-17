@@ -3,6 +3,7 @@ import markdown
 
 import elephant.global_
 import jessica
+import jessica.text
 
 class Loader(jinja2.BaseLoader):
     def __init__(self, e):
