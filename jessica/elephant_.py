@@ -23,9 +23,9 @@ class Loader(jinja2.BaseLoader):
         return (raw, None, lambda: False)
 
 class Engine(elephant.global_.Global, jessica.Engine):
-    def __init__(self, db, ref_name):
+    def __init__(self, coll_files, coll_commits, coll_refs, coll_queries, ref_name):
         jessica.Engine.__init__(self)
-        elephant.global_.Global.__init__(self, db, ref_name)
+        elephant.global_.Global.__init__(self, coll_files, coll_commits, coll_refs, coll_queries, ref_name)
 
         self.template_loader = Loader(self)
 
@@ -42,7 +42,7 @@ class Engine(elephant.global_.Global, jessica.Engine):
     def commit_history_rev(self, commit_id):
 
         while commit_id:
-            c = self.db.commits.find_one({'_id': commit_id})
+            c = self.coll_commits.find_one({'_id': commit_id})
             yield c
             commit_id = c['parent']
 
@@ -74,7 +74,7 @@ class Engine(elephant.global_.Global, jessica.Engine):
 
     def working_tree_file(self, file_id):
         
-        file0 = self.db.texts.find_one({'_id': file_id})
+        file0 = self.coll_files.find_one({'_id': file_id})
 
         c0 = file0['commit_id'] 
 
@@ -84,13 +84,13 @@ class Engine(elephant.global_.Global, jessica.Engine):
         else:
             content = self.construct_file_content(file_id, self.ref['commit_id'])
 
-            self.db.texts.update_one({'_id': file_id}, {'$set': {'content': content}})
+            self.coll_files.update_one({'_id': file_id}, {'$set': {'content': content}})
 
             return content
 
     def update_tree(self):
 
-        for file0 in self.db.texts.find():
+        for file0 in self.coll_files.find():
             self.working_tree_file(file0['_id'])
 
     def _get_raw(self, filt):
@@ -117,7 +117,7 @@ class Engine(elephant.global_.Global, jessica.Engine):
 
         #filt1 = dict((f'content.{k}', v) for k, v in filt0.items())
 
-        #item = self.db.texts.find_one(filt)
+        #item = self.coll_files.find_one(filt)
 
         item = self.get_content(filt0)
 
