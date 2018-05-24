@@ -4,8 +4,6 @@ async-timeout==2.0.1
 attrs==17.4.0
 bson==0.5.2
 chardet==3.0.4
-idna==2.6
-idna-ssl==1.0.1
 -e git+git@github.com:chuck1/jessica@89f3120bfb4cc81e6f24e83a91fb9a8f25b99b10#egg=jessica
 Jinja2==2.10
 Markdown==2.6.11

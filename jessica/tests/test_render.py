@@ -37,7 +37,12 @@ async def test_render():
 @pytest.mark.asyncio
 async def test_render_mongo(database):
 
-        e = jessica.elephant_.Engine(database, "master")
+        e = jessica.elephant_.Engine(
+            database.files,
+            database.commits,
+            database.refs,
+            database.queries,
+            "master")
 
         text = '{% set template = "temp1.html" %}\n# hello\n\n[test](a/b/c)'
 
