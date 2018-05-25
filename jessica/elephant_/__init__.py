@@ -4,6 +4,7 @@ import markdown
 import elephant.global_
 import jessica
 import jessica.text
+import jessica.elephant_.query
 
 class Loader(jinja2.BaseLoader):
     def __init__(self, e):
@@ -23,9 +24,14 @@ class Loader(jinja2.BaseLoader):
         return (raw, None, lambda: False)
 
 class Engine(elephant.global_.Global, jessica.Engine):
-    def __init__(self, coll_files, coll_commits, coll_refs, coll_queries, ref_name):
+    def __init__(self, coll, ref_name):
         jessica.Engine.__init__(self)
-        elephant.global_.Global.__init__(self, coll_files, coll_commits, coll_refs, coll_queries, ref_name)
+        elephant.global_.Global.__init__(
+                self, 
+                coll, 
+                ref_name,
+                jessica.elephant_.query.Engine(coll.queries)
+                )
 
         self.template_loader = Loader(self)
 

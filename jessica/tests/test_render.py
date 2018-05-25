@@ -36,12 +36,12 @@ async def test_render():
 
 @pytest.mark.asyncio
 async def test_render_mongo(database):
+        db = database
+
+        user_id = db.user.insert_one({}).inserted_id
 
         e = jessica.elephant_.Engine(
-            database.files,
-            database.commits,
-            database.refs,
-            database.queries,
+            db,
             "master")
 
         text = '{% set template = "temp1.html" %}\n# hello\n\n[test](a/b/c)'
@@ -51,11 +51,11 @@ async def test_render_mongo(database):
 
         print('write file')
 
-        e.put_new({'title': 'i like kittens', "text": text})
+        e.put_new({'title': 'i like kittens', "text": text}, user_id)
 
-        e.put_new({'template': 'default.html', "text": temp_1_text})
+        e.put_new({'template': 'default.html', "text": temp_1_text}, user_id)
 
-        e.put_new({'template': 'temp1.html', "text": temp_2_text})
+        e.put_new({'template': 'temp1.html', "text": temp_2_text}, user_id)
 
         e.template_env.get_template('default.html')
 
