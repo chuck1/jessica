@@ -36,6 +36,9 @@ class Engine:
 
         return text_2
 
+    async def render(self, path, context_1={}, context_2={}):
+        return await self.get_file(path, context_1, context_2)
+
     async def get_file(self, path, context_1={}, context_2={}):
         # source is rendered twice.
         # first to get the body as html and get variables set by the template, and second to but the body into the page.

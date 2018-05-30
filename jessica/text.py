@@ -31,4 +31,9 @@ class Text(elephant.global_.File):
 
         return d0
 
+    async def render(self):
+        try:
+            return await self.e.get_file({'_id': self.d['_id']})
+        except Exception as e:
+            return str(e)
 

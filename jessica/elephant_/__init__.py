@@ -9,10 +9,13 @@ import jessica.elephant_.query
 class Loader(jinja2.BaseLoader):
     def __init__(self, e):
         self.e = e
+        self.template_filter = {}
 
     def get_source(self, environment, template):
         # filter that describes file
         filt = {'template': template}
+        filt.update(self.template_filter)
+
         raw = self.e._get_raw(filt)
 
         if raw is None:
