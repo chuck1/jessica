@@ -1,5 +1,6 @@
 import json
 import datetime
+import traceback
 import bson
 import elephant.global_
 
@@ -33,7 +34,11 @@ class Text(elephant.global_.File):
 
     async def render(self):
         try:
-            return await self.e.get_file({'_id': self.d['_id']})
+            return await self.e.get_file(
+                    {'_id': self.d['_id']},
+                    context_1 = {'d': self},
+                    )
         except Exception as e:
+            traceback.print_exc()
             return str(e)
 

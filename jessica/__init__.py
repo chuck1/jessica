@@ -14,17 +14,22 @@ class Engine:
     def __init__(self):
         self.globals_1 = {}
     
-    def render_text_2(self, text, context={}):
+    async def render_text_2(self, text, context={}):
         template = self.template_env.from_string(text)
         template.globals.update(self.globals_1)
-        return template, template.render(context)
+        return template, await template.render_async(context)
 
-    def render_text_4(self, text, template_1, context_2={}):
+    def get_template_name(self, path):
+        return 'default.html'
 
-        if 'template' in dir(template_1.module):
-            template_file = template_1.module.template
-        else:
-            template_file = 'default.html'
+    async def render_text_4(self, path, text, template_1, context_2={}):
+
+        # TODO module attribute not available in async mode. reimplement the following
+        #if 'template' in dir(template_1.module):
+        #    template_file = template_1.module.template
+        #else:
+        
+        template_file = self.get_template_name(path)
 
         block_name = 'body'
 
@@ -32,7 +37,7 @@ class Engine:
         
         template = self.template_env.from_string(template_text)
 
-        text_2 = template.render(context_2)
+        text_2 = await template.render_async(context_2)
 
         return text_2
 
@@ -43,15 +48,16 @@ class Engine:
         # source is rendered twice.
         # first to get the body as html and get variables set by the template, and second to but the body into the page.
         #
-        # text_1 -> text_2 -> html_1 -> html_2
+        #        jinja        markdown        jinja
+        # text_1 ----> text_2 -------> html_1 ----> html_2
         
         text_1 = await self.get_raw(path)
 
-        template_1, text_2 = self.render_text_2(text_1, context_1)
+        template_1, text_2 = await self.render_text_2(text_1, context_1)
 
         html_1 = self.render_text_3(path, template_1, text_2)
 
-        text_4 = self.render_text_4(html_1, template_1, context_2)
+        text_4 = await self.render_text_4(path, html_1, template_1, context_2)
 
         return text_4
        

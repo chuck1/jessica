@@ -41,6 +41,7 @@ class Engine(elephant.global_.Global, jessica.Engine):
         self.template_env = jinja2.Environment(
                 loader=self.template_loader,
                 autoescape=jinja2.select_autoescape(['html', 'xml']),
+                enable_async=True,
                 )
 
         self.working_tree_id = None
@@ -137,6 +138,12 @@ class Engine(elephant.global_.Global, jessica.Engine):
 
     async def insert_text_item(self, item):
         return self.put(None, item)
+
+    def get_template_name(self, filt):
+        d = self.get_content(filt)
+        if 'template_' in d.d:
+            return d.d['template_']
+        return 'default.html'
 
     def render_text_3(self, filt, template_1, text_2):
         
