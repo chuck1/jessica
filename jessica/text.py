@@ -33,10 +33,13 @@ class Text(elephant.global_.File):
         return d0
 
     async def render(self):
+        context_2 = {'d': self}
+        print(f'render')
+        print(f'context_2 = {context_2}')
         try:
             return await self.e.get_file(
                     {'_id': self.d['_id']},
-                    context_1 = {'d': self},
+                    context_2=context_2,
                     )
         except Exception as e:
             traceback.print_exc()

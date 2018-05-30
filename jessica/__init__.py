@@ -17,7 +17,16 @@ class Engine:
     async def render_text_2(self, text, context={}):
         template = self.template_env.from_string(text)
         template.globals.update(self.globals_1)
-        return template, await template.render_async(context)
+
+        #print(f'render_text_2')
+        #print(f'context = {context}')
+        #print(f'template text = {text!r}')
+
+        ret = await template.render_async(context)
+
+        #print(f'ret = {ret!r}')
+
+        return template, ret
 
     def get_template_name(self, path):
         return 'default.html'
