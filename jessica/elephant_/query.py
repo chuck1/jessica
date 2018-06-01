@@ -1,7 +1,7 @@
 import elephant.local_
 
 class Query(elephant.local_.File):
-    def to_array(self):
+    async def to_array(self):
         d = dict(self.d)
         d["_collection"] = "texts queries"
         return d
