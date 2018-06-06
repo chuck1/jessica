@@ -129,7 +129,7 @@ class Engine(elephant.global_.Global, jessica.Engine):
 
         #item = self.coll_files.find_one(filt)
 
-        item = self.get_content(filt0)
+        item = self._get_content(filt0)
 
         return item
 
@@ -140,7 +140,7 @@ class Engine(elephant.global_.Global, jessica.Engine):
         return self.put(None, item)
 
     def get_template_name(self, filt):
-        d = self.get_content(filt)
+        d = self._get_content(filt)
         if 'template_' in d.d:
             return d.d['template_']
         return 'default.html'
