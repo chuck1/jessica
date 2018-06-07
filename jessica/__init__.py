@@ -13,6 +13,7 @@ def breakpoint():
 class Engine:
     def __init__(self):
         self.globals_1 = {}
+        self._context_2 = {}
     
     async def render_text_2(self, text, context={}):
         template = self.template_env.from_string(text)
@@ -46,7 +47,10 @@ class Engine:
         
         template = self.template_env.from_string(template_text)
 
-        text_2 = await template.render_async(context_2)
+        c = dict(self._context_2)
+        c.update(context_2)
+
+        text_2 = await template.render_async(c)
 
         return text_2
 
