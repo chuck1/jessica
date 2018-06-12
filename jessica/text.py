@@ -22,13 +22,7 @@ class Text(elephant.global_.File):
 
         del d0['_elephant']
 
-        # test json encode
-        if False:
-            try:
-                bson.json_util.dumps(d0)
-            except:
-                print(d0)
-                raise
+        d0['_collection'] = 'texts'
 
         return d0
 
