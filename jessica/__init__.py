@@ -16,7 +16,11 @@ class Engine:
         self._context_2 = {}
     
     async def render_text_2(self, text, context={}):
+        print('render text 2')
+        print(text)
+
         template = self.template_env.from_string(text)
+
         template.globals.update(self.globals_1)
 
         #print(f'render_text_2')
@@ -59,7 +63,8 @@ class Engine:
 
     async def get_file(self, path, context_1={}, context_2={}):
         # source is rendered twice.
-        # first to get the body as html and get variables set by the template, and second to but the body into the page.
+        # first to get the body as html and get variables set by the template, and 
+        # second to but the body into the page.
         #
         #        jinja        markdown        jinja
         # text_1 ----> text_2 -------> html_1 ----> html_2
@@ -68,9 +73,9 @@ class Engine:
 
         template_1, text_2 = await self.render_text_2(text_1, context_1)
 
-        html_1 = self.render_text_3(path, template_1, text_2)
+        text_3 = self.render_text_3(path, template_1, text_2)
 
-        text_4 = await self.render_text_4(path, html_1, template_1, context_2)
+        text_4 = await self.render_text_4(path, text_3, template_1, context_2)
 
         return text_4
        

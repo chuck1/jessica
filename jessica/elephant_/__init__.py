@@ -1,6 +1,8 @@
 import jinja2
 import markdown
-
+import pprint
+import tempfile
+import bson.json_util
 import elephant.global_
 import jessica
 import jessica.text
@@ -59,12 +61,6 @@ class Engine(elephant.global_.Global, jessica.Engine):
     def commit_history(self, commit_id):
         return reversed(list(self.commit_history_rev(commit_id)))
  
-    async def get_file(self, filt, context_1={}, context_2={}):
-
-        if 'template' in filt:
-            return await self.source.get_raw(filt)
-        
-        return await super(Engine, self).get_file(filt, context_1, context_2)
 
     def construct_file_content(self, file_id, commit_id):
 
@@ -120,7 +116,6 @@ class Engine(elephant.global_.Global, jessica.Engine):
     async def get_raw(self, filt):
         return self._get_raw(filt)
 
-
     def _get_text_item(self, filt0):
         
         #self.update_tree()
@@ -146,7 +141,6 @@ class Engine(elephant.global_.Global, jessica.Engine):
         return 'default.html'
 
     def render_text_3(self, filt, template_1, text_2):
-        
         return self.render_text_3_md_to_html(filt, template_1, text_2)
 
     def render_text_3_md_to_html(self, filt, template_1, text_2):
@@ -154,4 +148,62 @@ class Engine(elephant.global_.Global, jessica.Engine):
         text_3 = markdown.markdown(text_2)
 
         return text_3
+
+    def render_text_3_dot(self, filt, template_1, text_2):
+        print('render dot')
+
+        with tempfile.NamedTemporaryFile('r+') as f0:
+            with tempfile.NamedTemporaryFile('r+b', suffix='.svg') as f1:
+                f0.write(text_2)
+                f0.flush()
+                f0.seek(0)
+
+                import pygraphviz
+                B = pygraphviz.AGraph(f0.name)
+                B.layout()
+                B.draw(f1.name)
+
+                f1.flush()
+                f1.seek(0)
+                text_3 = f1.read()
+
+        
+        # debug
+        a = text_3
+        b = bson.json_util.dumps(a)
+        print('a',a)
+        print('b',b)
+
+
+        return text_3
+
+    async def render_dot(self, path, context_1={}, context_2={}):
+        
+        text_1 = await self.get_raw(path)
+
+        template_1, text_2 = await self.render_text_2(text_1, context_1)
+
+        text_3 = self.render_text_3_dot(path, template_1, text_2)
+
+        return text_3.decode()
+
+    async def get_file(self, filt, context_1={}, context_2={}):
+
+        print('render')
+        pprint.pprint(filt)
+
+        doc = self._get_content(filt)
+
+        if 'template' in filt:
+            return doc.d.get('text', '')
+ 
+        language = doc.d.get('lang', 'markdown')
+
+        if language == 'markdown':
+            return await super(Engine, self).get_file(filt, context_1, context_2)
+
+        if language == 'dot':
+            return await self.render_dot(filt, context_1, context_2)
+       
+        return await super(Engine, self).get_file(filt, context_1, context_2)
 

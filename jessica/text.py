@@ -14,9 +14,7 @@ class Text(elephant.global_.File):
 
         # render
         try:
-            s = await self.e.get_file({'_id': self.d['_id']})
-        
-            d0['_temp']['html'] = s
+            d0['_temp']['html'] = await self.render()
         except Exception as e:
             d0['_temp']['html'] = str(e)
 
@@ -40,7 +38,7 @@ class Text(elephant.global_.File):
         print(f'context_2 = {context_2}')
         try:
             return await self.e.get_file(
-                    {'_id': self.d['_id']},
+                    {"_id": self.d["_id"]},
                     context_2=context_2,
                     )
         except Exception as e:
