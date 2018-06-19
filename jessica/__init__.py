@@ -16,8 +16,6 @@ class Engine:
         self._context_2 = {}
     
     async def render_text_2(self, text, context={}):
-        print('render text 2')
-        print(text)
 
         template = self.template_env.from_string(text)
 

@@ -34,8 +34,8 @@ class Text(elephant.global_.File):
 
     async def render(self):
         context_2 = {'d': self}
-        print(f'render')
-        print(f'context_2 = {context_2}')
+        #logger.debug(f'render')
+        #logger.debug(f'context_2 = {context_2}')
         try:
             return await self.e.get_file(
                     {"_id": self.d["_id"]},
