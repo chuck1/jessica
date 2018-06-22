@@ -12,13 +12,13 @@ class Text(elephant.global_.File):
         
         d0 = dict(self.d)
 
+        if '_temp' not in d0: d0['_temp'] = {}
+
         # render
         try:
             d0['_temp']['html'] = await self.render()
         except Exception as e:
             d0['_temp']['html'] = str(e)
-
-        del d0['_elephant']
 
         d0['_collection'] = 'texts'
 
