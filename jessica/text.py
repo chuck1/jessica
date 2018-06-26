@@ -24,8 +24,8 @@ class Text(elephant.global_.File):
 
         return d0
 
-    def check(self):
-        super(Text, self).check()
+    async def check(self):
+        await super(Text, self).check()
 
         if '_texts' in self.d:
              logger.error('has field "_texts"')
