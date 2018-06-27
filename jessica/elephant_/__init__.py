@@ -1,4 +1,5 @@
 import jinja2
+import logging
 import markdown
 import pprint
 import tempfile
@@ -7,6 +8,8 @@ import elephant.global_
 import jessica
 import jessica.text
 import jessica.elephant_.query
+
+logger = logging.getLogger(__name__)
 
 class Loader(jinja2.BaseLoader):
     def __init__(self, e):
@@ -150,7 +153,7 @@ class Engine(elephant.global_.Global, jessica.Engine):
         return text_3
 
     def render_text_3_dot(self, filt, template_1, text_2):
-        print('render dot')
+        logger.info('render dot')
 
         with tempfile.NamedTemporaryFile('r+') as f0:
             with tempfile.NamedTemporaryFile('r+b', suffix='.svg') as f1:
@@ -171,8 +174,8 @@ class Engine(elephant.global_.Global, jessica.Engine):
         # debug
         a = text_3
         b = bson.json_util.dumps(a)
-        print('a',a)
-        print('b',b)
+        logger.info('a',a)
+        logger.info('b',b)
 
 
         return text_3
@@ -189,8 +192,8 @@ class Engine(elephant.global_.Global, jessica.Engine):
 
     async def get_file(self, filt, context_1={}, context_2={}):
 
-        print('render')
-        pprint.pprint(filt)
+        logger.debug('render')
+        logger.debug(filt)
 
         doc = self._get_content(filt)
 
