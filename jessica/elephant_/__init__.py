@@ -51,6 +51,11 @@ class Engine(elephant.global_.Global, jessica.Engine):
 
         self.working_tree_id = None
 
+    async def create_indices(self):
+        self.coll.files.create_index([
+                ("title", "text"), 
+                ("text", "text")])
+
     def _factory(self, d):
         return jessica.text.Text(self, d)
 
