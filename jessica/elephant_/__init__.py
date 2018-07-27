@@ -157,7 +157,7 @@ class Engine(elephant.global_.Global, jessica.Engine):
 
         return text_3
 
-    def render_text_3_dot(self, filt, template_1, text_2):
+    def render_text_3_dot(self, filt, template_1, text_2, doc=None):
         logger.info('render dot')
 
         with tempfile.NamedTemporaryFile('r+') as f0:
@@ -168,7 +168,7 @@ class Engine(elephant.global_.Global, jessica.Engine):
 
                 import pygraphviz
                 B = pygraphviz.AGraph(f0.name)
-                B.layout()
+                B.layout(prog=doc.d['lang'])
                 B.draw(f1.name)
 
                 f1.flush()
@@ -185,13 +185,13 @@ class Engine(elephant.global_.Global, jessica.Engine):
 
         return text_3
 
-    async def render_dot(self, path, context_1={}, context_2={}):
+    async def render_dot(self, path, context_1={}, context_2={}, doc=None):
         
         text_1 = await self.get_raw(path)
 
         template_1, text_2 = await self.render_text_2(text_1, context_1)
 
-        text_3 = self.render_text_3_dot(path, template_1, text_2)
+        text_3 = self.render_text_3_dot(path, template_1, text_2, doc=doc)
 
         return text_3.decode()
 
@@ -210,8 +210,8 @@ class Engine(elephant.global_.Global, jessica.Engine):
         if language == 'markdown':
             return await super(Engine, self).get_file(filt, context_1, context_2)
 
-        if language == 'dot':
-            return await self.render_dot(filt, context_1, context_2)
+        if language in ('dot', 'neato'):
+            return await self.render_dot(filt, context_1, context_2, doc=doc)
        
         return await super(Engine, self).get_file(filt, context_1, context_2)
 
