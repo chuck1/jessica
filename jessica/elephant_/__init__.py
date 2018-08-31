@@ -16,12 +16,12 @@ class Loader(jinja2.BaseLoader):
         self.e = e
         self.template_filter = {}
 
-    def get_source(self, environment, template):
+    async def get_source(self, environment, template):
         # filter that describes file
         filt = {'template': template}
         filt.update(self.template_filter)
 
-        raw = self.e._get_raw(filt)
+        raw = await self.e.get_raw(filt)
 
         if raw is None:
             if template == 'default.html':
@@ -107,9 +107,9 @@ class Engine(elephant.global_.Global, jessica.Engine):
         for file0 in self.coll_files.find():
             self.working_tree_file(file0['_id'])
 
-    def _get_raw(self, filt):
+    async def get_raw(self, filt):
         
-        file0 = self._get_text_item(filt)
+        file0 = await self.get_text_item(filt)
 
         if file0 is None: return
         
@@ -121,10 +121,7 @@ class Engine(elephant.global_.Global, jessica.Engine):
 
         return file0.d['text']
 
-    async def get_raw(self, filt):
-        return self._get_raw(filt)
-
-    def _get_text_item(self, filt0):
+    async def get_text_item(self, filt0):
         
         #self.update_tree()
 
@@ -132,18 +129,15 @@ class Engine(elephant.global_.Global, jessica.Engine):
 
         #item = self.coll_files.find_one(filt)
 
-        item = self._get_content(filt0)
+        item = await self._find_one(filt0)
 
         return item
-
-    async def get_text_item(self, filt0):
-        return self._get_text_item(filt0)
 
     async def insert_text_item(self, item):
         return self.put(None, item)
 
-    def get_template_name(self, filt):
-        d = self._get_content(filt)
+    async def get_template_name(self, filt):
+        d = await self._find_one(filt)
         if 'template_' in d.d:
             return d.d['template_']
         return 'default.html'
@@ -200,7 +194,7 @@ class Engine(elephant.global_.Global, jessica.Engine):
         logger.debug('render')
         logger.debug(filt)
 
-        doc = self._get_content(filt)
+        doc = await self._find_one(filt)
 
         if 'template' in filt:
             return doc.d.get('text', '')

@@ -31,7 +31,7 @@ class Engine:
 
         return template, ret
 
-    def get_template_name(self, path):
+    async def get_template_name(self, path):
         return 'default.html'
 
     async def render_text_4(self, path, text, template_1, context_2={}):
@@ -41,7 +41,7 @@ class Engine:
         #    template_file = template_1.module.template
         #else:
         
-        template_file = self.get_template_name(path)
+        template_file = await self.get_template_name(path)
 
         block_name = 'body'
 
