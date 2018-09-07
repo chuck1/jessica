@@ -1,4 +1,4 @@
-import jinja2
+import jinja2_async
 import logging
 import markdown
 import pprint
@@ -11,7 +11,7 @@ import jessica.elephant_.query
 
 logger = logging.getLogger(__name__)
 
-class Loader(jinja2.BaseLoader):
+class Loader(jinja2_async.BaseLoader):
     def __init__(self, e):
         self.e = e
         self.template_filter = {}
@@ -27,7 +27,7 @@ class Loader(jinja2.BaseLoader):
             if template == 'default.html':
                 raw = '{% block body %}{% endblock %}'
             else:
-                raise jinja2.TemplateNotFound(template)
+                raise jinja2_async.TemplateNotFound(template)
 
         return (raw, None, lambda: False)
 
@@ -43,10 +43,9 @@ class Engine(elephant.global_.Global, jessica.Engine):
 
         self.template_loader = Loader(self)
 
-        self.template_env = jinja2.Environment(
+        self.template_env = jinja2_async.Environment(
                 loader=self.template_loader,
-                autoescape=jinja2.select_autoescape(['html', 'xml']),
-                enable_async=True,
+                autoescape=jinja2_async.select_autoescape(['html', 'xml']),
                 )
 
         self.working_tree_id = None

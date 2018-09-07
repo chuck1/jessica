@@ -2,7 +2,7 @@ import os
 
 import elephant.global_
 import aardvark
-import jinja2
+#import jinja2
 import markdown
 import bson
 import pymongo
