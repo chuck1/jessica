@@ -31,10 +31,10 @@ class Loader(jinja2_async.BaseLoader):
 
         return (raw, None, lambda: False)
 
-class Engine(elephant.global_.Global, jessica.Engine):
+class Engine(elephant.global_.Engine, jessica.Engine):
     def __init__(self, coll, ref_name):
         jessica.Engine.__init__(self)
-        elephant.global_.Global.__init__(
+        elephant.global_.Engine.__init__(
                 self, 
                 coll, 
                 ref_name,
