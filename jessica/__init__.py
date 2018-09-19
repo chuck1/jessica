@@ -1,11 +1,15 @@
+import logging
 import os
 
+import crayons
 import elephant.global_
 import aardvark
 #import jinja2
 import markdown
 import bson
 import pymongo
+
+logger = logging.getLogger(__name__)
 
 def breakpoint():
     import pdb; pdb.set_trace()
@@ -69,7 +73,12 @@ class Engine:
         
         text_1 = await self.get_raw(path)
 
-        template_1, text_2 = await self.render_text_2(text_1, context_1)
+        try:
+            template_1, text_2 = await self.render_text_2(text_1, context_1)
+        except:
+            logger.warning(crayons.yellow("error rendering text"))
+            logger.warning(crayons.yellow(repr(path)))
+            return ""
 
         text_3 = self.render_text_3(path, template_1, text_2)
 

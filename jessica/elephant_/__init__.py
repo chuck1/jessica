@@ -32,7 +32,9 @@ class Loader(jinja2_async.BaseLoader):
         return (raw, None, lambda: False)
 
 class Engine(elephant.global_.Engine, jessica.Engine):
-    def __init__(self, coll, ref_name):
+
+    def __init__(self, h, coll, ref_name):
+        self.h = h
         jessica.Engine.__init__(self)
         elephant.global_.Engine.__init__(
                 self, 
@@ -55,7 +57,7 @@ class Engine(elephant.global_.Engine, jessica.Engine):
                 ("title", "text"), 
                 ("text", "text")])
 
-    def _factory(self, d):
+    async def _factory(self, d):
         return jessica.text.Text(self, d)
 
     def commit_history_rev(self, commit_id):
