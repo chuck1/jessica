@@ -5,8 +5,9 @@ import bson
 import elephant.global_
 
 class Text(elephant.global_.File):
-    def __init__(self, e, d):
-        super(Text, self).__init__(e, d)
+    def __init__(self, e, d, _d):
+        super(Text, self).__init__(e, d, _d)
+        self.d['_collection'] = 'texts'
 
     async def to_array(self):
         
@@ -20,7 +21,6 @@ class Text(elephant.global_.File):
         except Exception as e:
             d0['_temp']['html'] = str(e)
 
-        d0['_collection'] = 'texts'
 
         return d0
 

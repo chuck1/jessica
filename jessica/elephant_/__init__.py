@@ -40,7 +40,7 @@ class Engine(elephant.global_.Engine, jessica.Engine):
                 self, 
                 coll, 
                 ref_name,
-                jessica.elephant_.query.Engine(coll.queries)
+                jessica.elephant_.query.Engine(h, coll.queries)
                 )
 
         self.template_loader = Loader(self)
@@ -52,13 +52,12 @@ class Engine(elephant.global_.Engine, jessica.Engine):
 
         self.working_tree_id = None
 
+        self._doc_class = jessica.text.Text
+
     async def create_indices(self):
         self.coll.files.create_index([
                 ("title", "text"), 
                 ("text", "text")])
-
-    async def _factory(self, d):
-        return jessica.text.Text(self, d)
 
     def commit_history_rev(self, commit_id):
 
@@ -69,7 +68,6 @@ class Engine(elephant.global_.Engine, jessica.Engine):
 
     def commit_history(self, commit_id):
         return reversed(list(self.commit_history_rev(commit_id)))
- 
 
     def construct_file_content(self, file_id, commit_id):
 
