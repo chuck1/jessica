@@ -1,6 +1,6 @@
 import elephant.local_
 
-class Query(elephant.local_.File):
+class Query(elephant.local_.doc.Query):
     def __init__(self, e, d, _d):
         super().__init__(e, d, _d)
         self.d["_collection"] = "texts queries"
