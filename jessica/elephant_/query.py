@@ -1,4 +1,5 @@
 import elephant.local_
+import elephant.local_.doc
 
 class Query(elephant.local_.doc.Query):
     def __init__(self, e, d, _d):
