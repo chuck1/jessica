@@ -6,26 +6,20 @@ import elephant.global_
 
 class Text(elephant.global_.File):
     def __init__(self, e, d, _d):
-        super(Text, self).__init__(e, d, _d)
+        super().__init__(e, d, _d)
         self.d['_collection'] = 'texts'
 
-    async def to_array(self):
-        
-        d0 = dict(self.d)
-
-        if '_temp' not in d0: d0['_temp'] = {}
+    async def update_temp(self, user):
+        await super().update_temp(user)
 
         # render
         try:
-            d0['_temp']['html'] = await self.render()
+            self.d['_temp']['html'] = await self.render()
         except Exception as e:
-            d0['_temp']['html'] = str(e)
-
-
-        return d0
+            self.d['_temp']['html'] = str(e)
 
     async def check(self):
-        await super(Text, self).check()
+        await super().check()
 
         if '_texts' in self.d:
              logger.error('has field "_texts"')
