@@ -110,7 +110,7 @@ class Engine(elephant.global_.Engine, jessica.Engine):
         
         file0 = await self.get_text_item(filt)
 
-        if file0 is None: return
+        if file0 is None: return ""
         
         if not "text" in file0.d:
             return ""
@@ -135,10 +135,12 @@ class Engine(elephant.global_.Engine, jessica.Engine):
     async def insert_text_item(self, item):
         return self.put(None, item)
 
-    async def get_template_name(self, filt):
-        d = await self._find_one(filt)
-        if 'template_' in d.d:
-            return d.d['template_']
+    async def get_template_name(self, filt, doc=None):
+        if doc is None:
+            doc = await self._find_one(filt)
+
+        if 'template_' in doc.d:
+            return doc.d['template_']
         return 'default.html'
 
     def render_text_3(self, filt, template_1, text_2):
@@ -188,23 +190,30 @@ class Engine(elephant.global_.Engine, jessica.Engine):
 
         return text_3.decode()
 
-    async def get_file(self, filt, context_1={}, context_2={}):
+    async def get_file(self, filt, doc=None, context_1={}, context_2={}):
 
         logger.debug('render')
         logger.debug(filt)
 
-        doc = await self._find_one(filt)
+        if doc is None:
+            doc = await self._find_one(filt)
+
+        text_1 = doc.d.get('text', '')
+
+        assert isinstance(text_1, str)
 
         if 'template' in filt:
-            return doc.d.get('text', '')
+            return text_1
  
         language = doc.d.get('lang', 'markdown')
 
         if language == 'markdown':
-            return await super(Engine, self).get_file(filt, context_1, context_2)
+            return await super().get_file(filt, text_1=text_1, context_1=context_1, context_2=context_2, doc=doc)
 
         if language in ('dot', 'neato'):
             return await self.render_dot(filt, context_1, context_2, doc=doc)
        
-        return await super(Engine, self).get_file(filt, context_1, context_2)
+        return await super().get_file(filt, context_1, context_2)
+
+
 

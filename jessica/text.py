@@ -1,8 +1,12 @@
 import json
 import datetime
+import logging
 import traceback
+
 import bson
 import elephant.global_
+
+logger = logging.getLogger(__name__)
 
 class Text(elephant.global_.File):
     def __init__(self, e, d, _d):
@@ -10,13 +14,18 @@ class Text(elephant.global_.File):
         self.d['_collection'] = 'texts'
 
     async def update_temp(self, user):
+        logger.info("update temp")
+
         await super().update_temp(user)
 
         # render
         try:
             self.d['_temp']['html'] = await self.render()
         except Exception as e:
-            self.d['_temp']['html'] = str(e)
+            logger.error("error in text render: {e!r}")
+            self.d['_temp']['html'] = repr(e)
+
+        #logger.info(f'temp = {self.d["_temp"]}')
 
     async def check(self):
         await super().check()
@@ -33,7 +42,8 @@ class Text(elephant.global_.File):
         try:
             return await self.e.get_file(
                     {"_id": self.d["_id"]},
-                    context_2=context_2,
+                    doc       = self,
+                    context_2 = context_2,
                     )
         except Exception as e:
             traceback.print_exc()
