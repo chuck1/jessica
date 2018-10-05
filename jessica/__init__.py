@@ -1,6 +1,7 @@
 import logging
 import os
 import traceback
+import pprint
 
 import crayons
 import elephant.global_
@@ -50,6 +51,8 @@ class Engine:
 
         block_name = 'body'
 
+        logger.info(f'text = {text!r}')
+
         template_text = f'{{% extends {template_file!r} %}} {{% block {block_name} %}}{text}{{% endblock %}}'
         
         template = self.template_env.from_string(template_text)
@@ -59,11 +62,14 @@ class Engine:
 
         try:
             text_2 = await template.render_async(c)
-        except:
+        except Exception as e:
             print("error rendering:")
             print()
             print(template_text)
             print()
+            return repr(e)
+
+        logger.info(f'{template_text!r} -> {text_2!r}')
 
         return text_2
 
@@ -82,6 +88,11 @@ class Engine:
         if text_1 is None:
             text_1 = await self.get_raw(path)
 
+        logger.info(f"path   = {path!r}")
+        logger.info(f"doc    =")
+        pprint.pprint(doc.d)
+        logger.info(f"text_1 = {text_1!r}")
+
         assert isinstance(text_1, str)
 
         try:
@@ -91,11 +102,17 @@ class Engine:
             logger.warning(crayons.yellow(f'error  = {e!r}'))
             logger.warning(crayons.yellow(f'text_1 = {text_1!r}'))
             traceback.print_exc()
-            return ""
+            return repr(e)
+
+        logger.info(f"text_2 = {text_2!r}")
 
         text_3 = self.render_text_3(path, template_1, text_2)
 
+        logger.info(f"text_3 = {text_3!r}")
+
         text_4 = await self.render_text_4(path, text_3, template_1, context_2, doc=doc)
+
+        logger.info(f"text_4 = {text_4!r}")
 
         return text_4
        

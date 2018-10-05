@@ -2,6 +2,7 @@ import jinja2_async
 import logging
 import markdown
 import pprint
+import traceback
 import tempfile
 import bson.json_util
 import elephant.global_
@@ -18,6 +19,7 @@ class Loader(jinja2_async.BaseLoader):
 
     async def get_source(self, environment, template):
         # filter that describes file
+
         filt = {'template': template}
         filt.update(self.template_filter)
 
@@ -107,18 +109,28 @@ class Engine(elephant.global_.Engine, jessica.Engine):
             self.working_tree_file(file0['_id'])
 
     async def get_raw(self, filt):
-        
+       
+        logger.info("get raw")
+ 
         file0 = await self.get_text_item(filt)
 
-        if file0 is None: return ""
+        if file0 is None:
+            logger.warning("no doc")
+            #traceback.print_stack()
+            return None
         
         if not "text" in file0.d:
+            logger.warning("no field text")
             return ""
 
         if not isinstance(file0.d['text'], str):
             raise TypeError(f'text field must be string. {file0!r}')
 
-        return file0.d['text']
+        raw = file0.d['text']
+ 
+        logger.info(f"raw = {raw!r}")
+
+        return raw
 
     async def get_text_item(self, filt0):
         
