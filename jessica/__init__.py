@@ -57,7 +57,13 @@ class Engine:
         c = dict(self._context_2)
         c.update(context_2)
 
-        text_2 = await template.render_async(c)
+        try:
+            text_2 = await template.render_async(c)
+        except:
+            print("error rendering:")
+            print()
+            print(template_text)
+            print()
 
         return text_2
 
