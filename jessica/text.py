@@ -9,8 +9,8 @@ import elephant.global_
 logger = logging.getLogger(__name__)
 
 class Text(elephant.global_.File):
-    def __init__(self, e, d, _d):
-        super().__init__(e, d, _d)
+    def __init__(self, e, d, _d, *args):
+        super().__init__(e, d, _d, *args)
         self.d['_collection'] = 'texts'
 
     async def update_temp(self, user):
