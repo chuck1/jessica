@@ -90,7 +90,7 @@ class Engine:
 
         logger.info(f"path   = {path!r}")
         logger.info(f"doc    =")
-        pprint.pprint(doc.d)
+        #pprint.pprint(doc.d)
         logger.info(f"text_1 = {text_1!r}")
 
         assert isinstance(text_1, str)
