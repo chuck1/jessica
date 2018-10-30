@@ -4,11 +4,11 @@ import logging
 import traceback
 
 import bson
-import elephant.global_
+import elephant.global_.doc
 
 logger = logging.getLogger(__name__)
 
-class Text(elephant.global_.File):
+class Text(elephant.global_.doc.Doc):
     def __init__(self, e, d, _d, *args):
         super().__init__(e, d, _d, *args)
         self.d['_collection'] = 'texts'
@@ -22,7 +22,7 @@ class Text(elephant.global_.File):
         try:
             self.d['_temp']['html'] = await self.render()
         except Exception as e:
-            logger.error("error in text render: {e!r}")
+            logger.warning("error in text render: {e!r}")
             self.d['_temp']['html'] = repr(e)
 
         #logger.info(f'temp = {self.d["_temp"]}')

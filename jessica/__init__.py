@@ -63,10 +63,11 @@ class Engine:
         try:
             text_2 = await template.render_async(c)
         except Exception as e:
-            print("error rendering:")
-            print()
-            print(template_text)
-            print()
+            logger.warning("error rendering:")
+            logger.warning("")
+            logger.warning(template_text)
+            logger.warning("")
+            raise
             return repr(e)
 
         logger.info(f'{template_text!r} -> {text_2!r}')
