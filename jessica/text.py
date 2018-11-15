@@ -5,6 +5,7 @@ import traceback
 
 import bson
 import elephant.global_.doc
+import otter.subobjects.tag
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +35,12 @@ class Text(elephant.global_.doc.Doc):
              logger.error('has field "_texts"')
              #f["texts"] = f.d["_texts"]
              #self.e_texts.coll_files.update_one({"_id": f.d["_id"]}, {"$unset": {"_texts": ""}})
+
+        # tags
+        for tag in self.d.get("tags", []):
+            if not isinstance(tag, otter.subobjects.tag.Tag):
+                raise TypeError(f"expected Tag got {type(tag)} {repr(tag)}")
+
 
     async def render(self):
         context_2 = {'d': self}
